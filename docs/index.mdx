@@ -1,0 +1,85 @@
+---
+title: django-trainhorn
+description: Reusable Django app with train horn calculators, forms, views and template filters.
+---
+
+`django-trainhorn` adds three calculators to any Django project:
+
+- **Sound level at a distance.** The level of a horn at a listener's distance from
+  its rating, with the inverse-square law and optional air absorption. A horn rated
+  150 dB at 10 ft gives about 130 dB at 100 ft.
+- **Air tank runtime.** Seconds of horn time between two gauge pressures (Boyle's
+  law), how many blasts fit, and how long a compressor needs to refill the tank.
+- **Wire gauge.** The smallest copper AWG size that keeps a 12 V or 24 V run within
+  a voltage-drop budget.
+
+The numbers come from the tested
+[trainhorn-calc](https://github.com/train-horn/trainhorn-calc) 1.0.0 core, which is
+vendored unchanged in `trainhorn/calc/`. The only dependency is Django 4.2 or newer.
+
+<Warning>
+Results are engineering estimates from simple physical models. They are not
+measurements, and they are not legal advice about horn use.
+</Warning>
+
+## Install
+
+```bash
+pip install "git+https://github.com/train-horn/django-trainhorn.git@v1.0.0"
+```
+
+Add the app and its URLs:
+
+```python
+# settings.py
+INSTALLED_APPS = [
+    # ...
+    "trainhorn",
+]
+
+# urls.py
+from django.urls import include, path
+
+urlpatterns = [
+    # ...
+    path("calc/", include("trainhorn.urls")),
+]
+```
+
+Run `python manage.py check`, then open `/calc/`. You get an index page and one
+page per calculator.
+
+## Quick start in a template
+
+```django
+{% load trainhorn %}
+<p>At 100 ft: {{ 150|spl_at_distance:"10,100" }} dB</p>   {# 130.0 #}
+<p>Horn time: {{ 5|tank_runtime:"150,110,10" }} s</p>     {# 10.9 #}
+<p>Wire: {{ 30|awg:"10" }} AWG</p>                        {# 6 #}
+```
+
+## What is in the package
+
+| Part | Where | Page |
+|---|---|---|
+| Template filters and a tag | `trainhorn.templatetags.trainhorn` | [Template filters](/template-filters) |
+| `SPLForm`, `TankRuntimeForm`, `WireGaugeForm` | `trainhorn.forms` | [Forms](/forms) |
+| Class-based views, URL patterns, templates | `trainhorn.views`, `trainhorn.urls` | [Views and templates](/views) |
+| `TRAINHORN` setting and system check | `trainhorn.conf`, `trainhorn.checks` | [Settings and checks](/settings) |
+
+## Tests
+
+```bash
+python -m venv .venv && .venv/bin/pip install django
+.venv/bin/python runtests.py
+```
+
+53 tests run with Django's test runner: filters, forms with valid and invalid
+data, views (status 200, inline errors, results), the system check, and parity
+with the trainhorn-calc reference vectors.
+
+## Related
+
+The same calculators run in the browser on
+[train-horn.com](https://train-horn.com/tools/), an independent reference on
+train horns.

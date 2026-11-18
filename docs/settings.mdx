@@ -1,0 +1,36 @@
+---
+title: Settings and checks
+description: The optional TRAINHORN setting and its system check.
+---
+
+Every key is optional. Values are read on each request, so `override_settings`
+works in tests.
+
+```python
+TRAINHORN = {
+    "DEFAULT_UNIT": "ft",          # "ft" or "m"
+    "DEFAULT_REF_DISTANCE": 10,    # distance the rated dB applies to
+    "DEFAULT_SYSTEM_VOLTAGE": 12,  # wire gauge calculator
+    "DEFAULT_MAX_DROP_PCT": 3,     # wire gauge calculator
+    "DECIMALS": 1,                 # rounding in filters and result pages
+}
+```
+
+A European site might use metres and a 1 m reference:
+
+```python
+TRAINHORN = {"DEFAULT_UNIT": "m", "DEFAULT_REF_DISTANCE": 1}
+```
+
+## System check
+
+`python manage.py check` validates the setting:
+
+| ID | Problem |
+|---|---|
+| `trainhorn.E001` | `TRAINHORN` is not a dict |
+| `trainhorn.E002` | `DEFAULT_UNIT` is not `ft` or `m` |
+| `trainhorn.E003` | A numeric setting is not a positive number |
+| `trainhorn.E004` | `DEFAULT_MAX_DROP_PCT` is above 50 |
+| `trainhorn.E005` | `DECIMALS` is not an integer from 0 to 6 |
+| `trainhorn.W001` | Unknown key, usually a typo such as `DEFAULT_UNITS` |

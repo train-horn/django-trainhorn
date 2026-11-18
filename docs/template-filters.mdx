@@ -1,0 +1,72 @@
+---
+title: Template filters
+description: Filters and a tag for train horn numbers in Django templates.
+---
+
+Load the library with `{% load trainhorn %}`. Each filter takes the main quantity
+as its value and the rest as one comma-separated string. Results are rounded to
+the `DECIMALS` setting (default 1). Filters never raise: invalid input renders as
+an empty string, the same way Django's built-in filters behave.
+
+## spl_at_distance
+
+Level in dB at a listener distance, from a rated level.
+
+```django
+{{ 150|spl_at_distance:"100" }}       {# rated at DEFAULT_REF_DISTANCE (10), listener at 100 -> 130.0 #}
+{{ 150|spl_at_distance:"10,100" }}    {# rated at 10, listener at 100 -> 130.0 #}
+{{ 120|spl_at_distance:"1,10,m" }}    {# rated at 1 m, listener at 10 m -> 100.0 #}
+```
+
+Argument: `distance`, or `ref_distance,distance`, or `ref_distance,distance,unit`.
+The unit is `ft` or `m` and defaults to `DEFAULT_UNIT`.
+
+## distance_for_spl
+
+Distance at which the level falls to a target. Same argument shape, with the target
+level in place of the distance.
+
+```django
+{{ 150|distance_for_spl:"130" }}      {# 100.0 #}
+{{ 150|distance_for_spl:"10,90" }}    {# 10000.0 #}
+```
+
+## tank_runtime
+
+Seconds of continuous horn time. Value: tank size in US gallons. Argument:
+`start_psi,cutoff_psi,horn_cfm`.
+
+```django
+{{ 5|tank_runtime:"150,110,10" }}     {# 10.9 #}
+```
+
+## awg
+
+Smallest copper AWG size as a string. Value: current in amperes. Argument:
+`length`, optionally followed by `system_voltage`, `max_drop_pct` and `unit`.
+
+```django
+{{ 30|awg:"10" }}                     {# "6" at 12 V, 3 % drop #}
+{{ 30|awg:"10,24,3,ft" }}
+```
+
+## voltage_drop
+
+Volts lost in a two-conductor copper run, rounded to 3 decimals. Argument:
+`length,awg` or `length,awg,unit`.
+
+```django
+{{ 30|voltage_drop:"10,8" }}
+```
+
+## trainhorn_wire tag
+
+Returns the full suggestion object (or `None` for invalid input) for use with `as`.
+
+```django
+{% trainhorn_wire 30 10 system_voltage=12 max_drop_pct=3 as wire %}
+{% if wire %}{{ wire.awg }} AWG, {{ wire.voltage_drop_v|floatformat:2 }} V drop{% endif %}
+```
+
+Attributes: `awg`, `voltage_drop_v`, `voltage_drop_pct`, `allowed_drop_pct`,
+`system_voltage`, `amps`, `one_way_length`, `unit`.

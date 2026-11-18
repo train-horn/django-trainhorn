@@ -1,0 +1,71 @@
+---
+title: Forms
+description: Django forms that validate input and run the calculators.
+---
+
+All three forms live in `trainhorn.forms`. Each one validates its fields, runs the
+core calculation in `clean()` and stores the answer in `form.result`, which stays
+`None` until the form is valid.
+
+```python
+from trainhorn.forms import SPLForm
+
+form = SPLForm({"source_db": 150, "ref_distance": 10, "distance": 100, "unit": "ft"})
+form.is_valid()            # True
+form.result["level_db"]    # 130.0
+```
+
+## Validation
+
+- Field errors: required fields left empty, text that is not a number, zero or
+  negative values where only positive numbers make sense, a voltage-drop limit over
+  50 %, an unknown unit.
+- Calculation errors become non-field errors with the core's message. Example: a
+  cut-off pressure higher than the start pressure gives
+  "start_psi (100 psi) must be greater than cutoff_psi (110 psi)".
+- Fields with errors get `aria-invalid="true"` and an `aria-describedby` that
+  points at the help text and the error list.
+
+## SPLForm
+
+| Field | Required | Notes |
+|---|---|---|
+| `source_db` | yes | Rated level, 0 to 250 dB |
+| `ref_distance` | yes | Initial value from `DEFAULT_REF_DISTANCE` |
+| `distance` | yes | Listener distance |
+| `unit` | yes | `ft` or `m`; initial value from `DEFAULT_UNIT` |
+| `absorption_db_per_km` | no | Air absorption; empty means none |
+| `target_db` | no | Also compute the distance to this level |
+
+`result`: `level_db`, `unit`, `target_distance` (or `None`).
+
+## TankRuntimeForm
+
+| Field | Required | Notes |
+|---|---|---|
+| `tank_gallons` | yes | US gallons |
+| `start_psi` | yes | Gauge pressure |
+| `cutoff_psi` | yes | Must be below `start_psi` |
+| `horn_cfm` | yes | Free-air consumption |
+| `blast_seconds` | no | Count blasts of this length |
+| `compressor_cfm` | no | Refill time from cut-off back to start |
+
+`result`: `runtime_seconds`, `free_air_cuft`, `blasts`, `recovery_seconds`.
+
+## WireGaugeForm
+
+| Field | Required | Notes |
+|---|---|---|
+| `amps` | yes | Continuous current |
+| `one_way_length` | yes | Battery or fuse to load |
+| `unit` | yes | `ft` or `m` |
+| `system_voltage` | yes | Initial value from `DEFAULT_SYSTEM_VOLTAGE` |
+| `max_drop_pct` | yes | Up to 50; initial value from `DEFAULT_MAX_DROP_PCT` |
+
+`result`: `awg` and `wire` (the full suggestion object).
+
+## Your own calculator
+
+Subclass `trainhorn.forms.CalculatorForm` and implement `calculate(cleaned_data)`
+returning a dict. Raise `trainhorn.calc.InputError` for impossible input and it
+becomes a non-field error.

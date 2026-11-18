@@ -1,0 +1,14 @@
+{% extends "trainhorn/base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p id="trainhorn-intro">{{ intro }}</p>
+{% include "trainhorn/_form.html" %}
+<div aria-live="polite">
+{% if result %}
+  <div class="result" role="status">
+    <p>Use at least <strong>{{ result.awg }} AWG</strong> copper.</p>
+    <p>Voltage drop: {{ result.wire.voltage_drop_v|floatformat:2 }} V ({{ result.wire.voltage_drop_pct|floatformat:2 }} % of {{ result.wire.system_voltage|floatformat:"-1" }} V; limit {{ result.wire.allowed_drop_pct|floatformat:"-1" }} %).</p>
+  </div>
+{% endif %}
+</div>
+{% endblock %}

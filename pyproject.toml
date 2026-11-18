@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "django-trainhorn"
+version = "1.0.0"
+description = "Reusable Django app with train horn calculators: SPL vs distance, air tank runtime and wire gauge (forms, views, template filters)."
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Train Horn", email = "editorial@train-horn.com"}]
+requires-python = ">=3.8"
+dependencies = ["Django>=4.2"]
+keywords = ["django", "train horn", "decibel", "inverse square law", "air tank", "AWG", "voltage drop", "calculator"]
+classifiers = [
+    "Framework :: Django",
+    "Framework :: Django :: 4.2",
+    "Framework :: Django :: 5.0",
+    "Framework :: Django :: 5.1",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://train-horn.com/tools/"
+Documentation = "https://docs.page/train-horn/django-trainhorn"
+Source = "https://github.com/train-horn/django-trainhorn"
+Core = "https://github.com/train-horn/trainhorn-calc"
+
+[tool.setuptools.packages.find]
+include = ["trainhorn*"]
+
+[tool.setuptools.package-data]
+trainhorn = ["py.typed", "templates/trainhorn/*.html"]

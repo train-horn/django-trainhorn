@@ -1,0 +1,16 @@
+{% extends "trainhorn/base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p id="trainhorn-intro">{{ intro }}</p>
+{% include "trainhorn/_form.html" %}
+<div aria-live="polite">
+{% if result %}
+  <div class="result" role="status">
+    <p>Estimated level: <strong>{{ result.level_db|floatformat:decimals }} dB</strong> at {{ form.cleaned_data.distance|floatformat:"-2" }} {{ result.unit }}.</p>
+    {% if result.target_distance is not None %}
+    <p>The level falls to {{ form.cleaned_data.target_db|floatformat:"-1" }} dB at about <strong>{{ result.target_distance|floatformat:decimals }} {{ result.unit }}</strong>.</p>
+    {% endif %}
+  </div>
+{% endif %}
+</div>
+{% endblock %}

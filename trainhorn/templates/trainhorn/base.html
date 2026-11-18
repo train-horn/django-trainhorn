@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ title }}{% endblock %}</title>
+  {% block extra_head %}
+  <style>
+    .trainhorn { max-width: 40rem; margin: 0 auto; padding: 1rem; font-family: system-ui, sans-serif; line-height: 1.5; }
+    .trainhorn label { display: block; font-weight: 600; margin-top: .75rem; }
+    .trainhorn input, .trainhorn select { font: inherit; padding: .35rem; min-width: 12rem; }
+    .trainhorn .helptext { display: block; color: #555; font-size: .9em; }
+    .trainhorn .errorlist { color: #a00; margin: .25rem 0; padding-left: 1.2rem; }
+    .trainhorn .result { margin-top: 1rem; padding: .75rem 1rem; border: 2px solid #1a5; border-radius: .5rem; }
+    .trainhorn button { font: inherit; margin-top: 1rem; padding: .5rem 1.2rem; }
+    .trainhorn :focus-visible { outline: 3px solid #05c; outline-offset: 2px; }
+  </style>
+  {% endblock %}
+</head>
+<body>
+<main class="trainhorn" id="main">
+  {% block content %}{% endblock %}
+  {% block footer %}
+  <p><small>Estimates from simple physical models, not measurements or legal advice.</small></p>
+  {% endblock %}
+</main>
+</body>
+</html>

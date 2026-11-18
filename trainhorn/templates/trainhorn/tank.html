@@ -1,0 +1,15 @@
+{% extends "trainhorn/base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<p id="trainhorn-intro">{{ intro }}</p>
+{% include "trainhorn/_form.html" %}
+<div aria-live="polite">
+{% if result %}
+  <div class="result" role="status">
+    <p>Horn time: <strong>{{ result.runtime_seconds|floatformat:decimals }} s</strong> ({{ result.free_air_cuft|floatformat:2 }} cu ft of free air).</p>
+    {% if result.blasts is not None %}<p>That is <strong>{{ result.blasts }}</strong> blast{{ result.blasts|pluralize }} of {{ form.cleaned_data.blast_seconds|floatformat:"-1" }} s.</p>{% endif %}
+    {% if result.recovery_seconds is not None %}<p>Compressor refill back to start pressure: about <strong>{{ result.recovery_seconds|floatformat:decimals }} s</strong>.</p>{% endif %}
+  </div>
+{% endif %}
+</div>
+{% endblock %}

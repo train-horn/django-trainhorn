@@ -1,0 +1,58 @@
+---
+title: Views and templates
+description: Class-based views, URL names and overridable accessible templates.
+---
+
+## URLs
+
+`path("calc/", include("trainhorn.urls"))` adds:
+
+| URL | Name | View |
+|---|---|---|
+| `/calc/` | `trainhorn:index` | `IndexView` |
+| `/calc/spl/` | `trainhorn:spl` | `SPLView` |
+| `/calc/tank/` | `trainhorn:tank` | `TankRuntimeView` |
+| `/calc/wire/` | `trainhorn:wire` | `WireGaugeView` |
+
+## How the views behave
+
+The calculator views subclass `trainhorn.views.CalculatorView`, a `TemplateView`.
+Forms submit with GET, so each result has a shareable URL. A request with none of
+the form's fields in the query string shows an empty form, which means tracking
+parameters such as `utm_source` do not trigger validation errors. Pages return
+status 200 with errors shown inline.
+
+Context: `form`, `result` (or `None`), `title`, `intro` and `decimals`.
+
+To reuse a view with your own template:
+
+```python
+from django.urls import path
+from trainhorn.views import SPLView
+
+urlpatterns = [
+    path("horn-loudness/", SPLView.as_view(template_name="myapp/loudness.html", title="How loud is my horn?")),
+]
+```
+
+## Templates
+
+| Template | Purpose |
+|---|---|
+| `trainhorn/base.html` | Page shell with `title`, `extra_head`, `content` and `footer` blocks |
+| `trainhorn/_form.html` | Shared form: labels, help text, error summary |
+| `trainhorn/index.html` | List of calculators |
+| `trainhorn/spl.html`, `tank.html`, `wire.html` | One page per calculator |
+
+To use your site layout, create `templates/trainhorn/base.html` in your project
+(it wins over the app's copy when your project templates come first) and keep a
+`content` block. Replace `extra_head` to drop the small default stylesheet.
+
+## Accessibility
+
+- Every input has a `label` tied to it with `for`.
+- Help text and errors are linked with `aria-describedby`; invalid fields get
+  `aria-invalid="true"`.
+- Calculation errors appear in a `role="alert"` box; results appear in a
+  `role="status"` box inside an `aria-live="polite"` region.
+- The page has `lang="en"`, a visible focus outline and works without JavaScript.

@@ -1,0 +1,9 @@
+{% extends "trainhorn/base.html" %}
+{% block content %}
+<h1>{{ title }}</h1>
+<ul>
+  {% for calc in calculators %}
+  <li><a href="{% url calc.url_name %}">{{ calc.title }}</a> - {{ calc.summary }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://docs.page/schema.json",
+  "name": "django-trainhorn",
+  "description": "Reusable Django app with train horn calculators: SPL vs distance, air tank runtime and wire gauge.",
+  "social": {
+    "github": "train-horn/django-trainhorn"
+  },
+  "content": {
+    "showPageTitle": true
+  },
+  "sidebar": [
+    {
+      "group": "Getting started",
+      "pages": [
+        { "title": "Overview", "href": "/" },
+        { "title": "Settings and checks", "href": "/settings" }
+      ]
+    },
+    {
+      "group": "Reference",
+      "pages": [
+        { "title": "Template filters", "href": "/template-filters" },
+        { "title": "Forms", "href": "/forms" },
+        { "title": "Views and templates", "href": "/views" }
+      ]
+    }
+  ]
+}
